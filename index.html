@@ -246,9 +246,11 @@
     #bottom-nav a[aria-current="page"] .bn-ic{background:#D6E6F5}
     #bottom-nav a:active .bn-ic{background:#E8F1FA}
     @media (min-width:1280px){#bottom-nav{display:none}}
+    /* La barra in basso compare solo dopo l'accesso: prima ci sono solo Menu ed Entra in alto */
+    body:not(.is-logged) #bottom-nav{display:none}
     @media (max-width:1279px){
-        body{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
-        #cookie-banner,#cookie-toast{bottom:calc(76px + env(safe-area-inset-bottom,0px))!important}
+        body.is-logged{padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
+        body.is-logged #cookie-banner, body.is-logged #cookie-toast{bottom:calc(76px + env(safe-area-inset-bottom,0px))!important}
     }
     @media (prefers-reduced-motion: reduce){#bottom-nav .bn-ic{transition:none}}
 
@@ -1899,6 +1901,7 @@
         }
 
         function updateHeaderAuthUI() {
+            document.body.classList.toggle('is-logged', !!appState.isLoggedIn);
             const authLabel = document.getElementById('auth-label');
             const authIcon = document.getElementById('auth-icon');
             const subnav = document.getElementById('logged-subnav');
