@@ -293,8 +293,13 @@
 
     /* ---- Pagina punti: saldo in orizzontale su PC, riquadri di pari altezza ---- */
     .saldo-card{background:#F2F5F8;border:1px solid #D5DCE3;border-top:4px solid #0B4F8A;border-radius:12px;padding:20px;display:grid;gap:20px}
-    .saldo-meter{margin-top:14px;height:10px;border-radius:5px;background:#D5DCE3;overflow:hidden;max-width:360px}
+    .saldo-scale{margin-top:14px;max-width:360px}
+    .saldo-meter{position:relative;height:10px;border-radius:5px;background:#D5DCE3}
     .saldo-meter span{display:block;height:100%;background:#0B4F8A;border-radius:5px}
+    .saldo-tick{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:#111A22}
+    .saldo-ticks{position:relative;height:22px;margin-top:6px;font-size:16px;color:#3F4D5A;line-height:1.2}
+    .saldo-ticks span{position:absolute;top:0;white-space:nowrap}
+    .saldo-ticks span[style*="66.67"]{transform:translateX(-50%)}
     .saldo-facts{display:grid;gap:10px;margin:0}
     .saldo-facts dt{font-size:16px;color:#3F4D5A;margin:0}
     .saldo-facts dd{font-size:18px;font-weight:700;color:#111A22;margin:0}
@@ -667,7 +672,7 @@
                 <!-- Punti -->
                 <a href="#punti" class="dash-tile">
                     <span class="dash-label"><span class="material-symbols-outlined">id_card</span>Punti patente</span>
-                    <span class="dash-value"><strong>17</strong> su 20</span>
+                    <span class="dash-value"><strong>17</strong> punti</span>
                     <span class="dash-status ok"><span class="material-symbols-outlined">check_circle</span>Regolare</span>
                     <span class="dash-link">Storico e come recuperarli <span class="material-symbols-outlined">arrow_forward</span></span>
                 </a>
@@ -790,10 +795,16 @@
                         </div>
                         <div class="saldo-value">
                             <span class="saldo-num">17</span>
-                            <span class="text-[22px] text-textMain font-semibold">punti su 20</span>
+                            <span class="text-[22px] text-textMain font-semibold">punti</span>
                         </div>
-                        <div class="saldo-meter" role="img" aria-label="17 punti su 20">
-                            <span style="width:85%"></span>
+                        <!-- Barra su 30 (massimo); il segno indica i 20 punti con cui si parte -->
+                        <div class="saldo-scale" role="img" aria-label="Hai 17 punti. Si parte da 20, il massimo è 30.">
+                            <div class="saldo-meter"><span style="width:56.67%"></span><i class="saldo-tick" style="left:66.67%"></i></div>
+                            <div class="saldo-ticks" aria-hidden="true">
+                                <span style="left:0">0</span>
+                                <span style="left:66.67%">20 iniziali</span>
+                                <span style="right:0">30 max</span>
+                            </div>
                         </div>
                     </div>
 
@@ -839,6 +850,10 @@
                         <li class="flex items-start gap-3">
                             <span class="material-symbols-outlined text-primary mt-1">event_repeat</span>
                             <span><strong>Guida 2 anni senza infrazioni:</strong> il <strong>20 novembre 2028</strong> tornerai a 20 punti senza fare nulla.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary mt-1">trending_up</span>
+                            <span><strong>Poi guadagni il bonus:</strong> ogni altri 2 anni senza infrazioni ricevi 2 punti in più, fino a un massimo di 30.</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <span class="material-symbols-outlined text-primary mt-1">school</span>
@@ -2138,7 +2153,7 @@
             const currentPoints = 17;
             const simulatedPoints = Math.max(0, currentPoints - deduction);
 
-            headline.textContent = `Scenderesti a ${simulatedPoints} punti su 20`;
+            headline.textContent = `Scenderesti a ${simulatedPoints} punti`;
             detail.textContent = `${infractionName}: comporta la perdita di ${deduction} punti rispetto ai tuoi 17 punti attuali.`;
             resultBox.classList.remove('hidden');
         }
@@ -2331,7 +2346,8 @@
                     'Patente di guida: Categoria B - Numero U1A000000X',
                     'Data consultazione: 24 novembre 2026',
                     '------------------------------------------------------------------',
-                    'SALDO ATTUALE: 17 punti su 20 (Stato: Regolare)',
+                    'SALDO ATTUALE: 17 punti (Stato: Regolare)',
+                    'Punteggio iniziale: 20 punti - Massimo raggiungibile: 30 punti',
                     '------------------------------------------------------------------',
                     'Ultima variazione registrata:',
                     '- 20 novembre 2026: Eccesso di velocita oltre il limite (-3 punti)',
@@ -3111,8 +3127,9 @@
             box.addEventListener('change', e => {
                 const i = +e.target.value; const left = Math.max(0, 17 - simItems[i][0]);
                 box.querySelectorAll('.sim-ck').forEach((c, k) => c.classList.toggle('hidden', k !== i));
-                document.getElementById('sim-text').textContent = `Ti resterebbero ${left} punti su 20 (ora ne hai 17).`;
-                document.getElementById('sim-bar').innerHTML = Array.from({ length: 20 }, (_, n) => `<span class="inline-block w-4 h-6 rounded-sm border-2 border-primary ${n < left ? 'bg-primary' : 'bg-bgMain'}"></span>`).join('');
+                document.getElementById('sim-text').textContent = `Ti resterebbero ${left} punti (ora ne hai 17).`;
+                // Un quadratino per ognuno dei 17 punti attuali: pieni quelli che restano, vuoti quelli persi
+                document.getElementById('sim-bar').innerHTML = Array.from({ length: 17 }, (_, n) => `<span class="inline-block w-4 h-6 rounded-sm border-2 border-primary ${n < left ? 'bg-primary' : 'bg-bgMain'}"></span>`).join('');
             });
         }
         /* ---- Notizie senza illustrazioni ---- */
