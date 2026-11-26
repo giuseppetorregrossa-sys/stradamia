@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Miastrada</title>
+<script>
+    // Chi apre direttamente un indirizzo come /punti-patente arriva qui (GitHub Pages e simili):
+    // ricordiamo la pagina richiesta e torniamo al sito, che la apre da solo.
+    (function () {
+        var p = location.pathname.replace(/\/+$/, '');
+        var i = p.lastIndexOf('/');
+        try { sessionStorage.setItem('ms_route', p.slice(i + 1)); } catch (e) {}
+        location.replace(p.slice(0, i + 1));
+    })();
+</script>
+</head>
+<body>
+<p>Pagina non trovata. <a href="./">Torna a Miastrada</a></p>
+</body>
+</html>
